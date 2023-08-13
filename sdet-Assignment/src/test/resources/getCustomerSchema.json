@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "phone_number": {
+      "type": "string",
+      "pattern": "^[0-9]{10}$"
+    },
+    "sms_sent": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "phone_number"
+  ]
+}
