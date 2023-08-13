@@ -1,0 +1,208 @@
+Test Plan
+
+Introduction and Purpose
+
+The objective is to test the below two APIs & the database description mentioned in the document.
+
+* To ensure that the endpoints handle various request scenarios correctly.
+* To verify that the constraints and validations on request parameters and headers are properly enforced.
+* To ensure that the database is being updated as expected.
+
+
+Scope and Objectives
+
+The scope of this test plan is to test the above two APIs (two API endpoints: POST /api and GET /api) mentioned in the readme & the database model with all the different Tests for the API, Database.
+
+The test scenarios for Both the APIs include Testing the below things:-
+- [ ] Request & response Validations 
+- [ ] End Point Testing 
+- [ ] HTTP Status Codes & Error Handling (error codes)
+- [ ] Authorisation & Authentication
+- [ ] Schema Validation
+- [ ] Accuracy of Data, data types, Validations, order & completeness
+- [ ] Non-functional testing like performance and security testing
+- [ ] API Integration Testing
+- [ ] Versioning
+- [ ] Concurrency and Thread Safety
+- [ ] Scalability Testing
+- [ ] Internationalisation and Localisation
+- [ ] Redundancy and Failover Testing
+- [ ] Validate that the same record is inserted in the db when the flow is there
+- [ ] Verify the integrated flows with UI 
+- [ ] Verify the end-to-end flows by creating Customer through post API & then verifying through get API
+
+Functional Test Cases 
+
+1. Valid Scenarios with valid data for both the APIs
+2. Verify when there is a missing required field while creating the customer with post API
+3. Verify when there is an invalid header for both APIs.
+4. Verify when there is a missing header for both APIs.
+5. Verify the request & response validations in all the test cases.
+6. Verify when there is no Authorisation
+7. Verify when there is no Authentication Or a missing Authorisation.
+8. Verify the schema validation for both APIs
+9. Verify the accuracy of Data, data types, and Validations for both Apis
+10. Verify the tests when an incorrect URL is mentioned.
+11. Verify the tests when the APIs return different status codes. (Both APIs)
+12. Verify both APIs when the constraint mentioned is not followed like the name is having special characters or is alphanumeric, or the phone number has digits other than 10 while creating the Customer through post API.
+13. Verify both APIs by passing invalid headers.
+14. Verify both APIs when integrated with UI.
+15. Verify the end-to-end flows by creating Customers through post API & then verifying through get API.
+16. Verify by creating the same customer should result in the redundant data violation.
+17. Verify the tests if there is any versioning in the APIs.
+18. Verify the APIs if there is internationalisation & localisation.
+19. Verify the APIs to handle Redundancy tests or failover scenarios.
+20. Database Testing scenarios 
+* Description: Verify that the "sms_sent" field is updated asynchronously within the expected time frame.
+* Action: Trigger SMS sending process for a customer.
+* Expected Result: Within 10-20 seconds, the "sms_sent" field for the respective customer should be updated in the database
+
+21. Database Integrity Testing
+* Description: Check if the data in the SQLite database corresponds to the API inputs and updates.
+* Action: Query the database for a specific customer's details.
+* Expected Result: The data retrieved from the database should match the data that was inserted/updated through the API
+22. Verify performing the post API call for creating the customer & verify through get API & also verify that the record is inserted in the database 
+
+Security Testing Test Cases 
+
+1. Authorization and Authentication
+Test Case 1: Unauthorized Access Attempt
+* Description: Try accessing the API endpoints without providing the "x-session-token" header.
+* Expected Result: HTTP response code 401 Unauthorized.
+Test Case 2: Invalid x-session-token
+* Description: Send a request with an invalid or expired "x-session-token" header.
+    * Headers:
+    * x-session-token: "invalid-token"
+    * user-agent: Valid user-agent
+* Expected Result: HTTP response code 403 Forbidden.
+2. Injection Attacks
+Test Case 3: SQL Injection
+* Description: Attempt to perform SQL injection by sending malicious SQL queries in request parameters.
+* Expected Result: Request should be rejected with HTTP response code 400 Bad Request.
+Test Case 4: Cross-Site Scripting (XSS) Attack
+* Description: Try sending a request with a payload containing a malicious script in a parameter.
+* Expected Result: Request should be rejected with HTTP response code 400 Bad Request.
+3. Data Protection
+Test Case 5: Sensitive Data Exposure
+* Description: Ensure that sensitive data such as "x-session-token" and "phone_number" are not exposed in response payloads.
+* Expected Result: Sensitive data should be properly protected, not exposed in response data.
+Test Case 6: Encryption of Sensitive Data
+* Description: Validate that sensitive data, such as "x-session-token," is transmitted over secure channels (HTTPS).
+* Expected Result: Sensitive data should be encrypted during transmission.
+4. Rate Limiting and Throttling
+Test Case 7: Excessive Requests
+* Description: Send a large number of requests in a short period to test if rate limiting is applied.
+* Expected Result: After exceeding the rate limit, subsequent requests should be rejected with an appropriate HTTP response code (429 Too Many Requests).
+5. Input Validation
+Test Case 8: Special Characters in Headers
+* Description: Send headers with special characters and malicious content.
+    * Headers:
+    * x-session-token: "authorized-user"
+    * user-agent: Special_characters<script>alert('xss');</script>
+* Expected Result: Special characters should be properly sanitized and rejected. No security vulnerabilities should be exposed.
+Test Case 9: Special Characters in Request Body
+* Description: Send request parameters containing special characters and malicious content.
+* Headers: Same as Test Case 1
+* Body:json  Copy code{ "id": "valid-id", "name": "Malicious<script>alert('xss');</script>", "phone_number": "1234567890" }   
+* Expected Result: Special characters should be properly sanitized and rejected. No security vulnerabilities should be exposed.
+6. User Agent Validation
+Test Case 10: Bot Detection in User Agent
+* Description: Send a request with a user agent containing keywords indicative of bots or automation.
+    * Headers:
+    * x-session-token: "authorized-user"
+    * user-agent: BotUserAgent
+* Expected Result: Requests with bot-like user agents should be rejected with an appropriate HTTP response code.
+7. Insecure Headers
+Test Case 11: Missing Headers
+* Description: Send a request missing the required headers.
+* Expected Result: HTTP response code 400 Bad Request.
+Test Case 12: Non-HTTPS Communication
+* Description: Send a request using HTTP instead of HTTPS.
+* Headers: Same as Test Case 1
+* Expected Result: If configured, the server should enforce HTTPS and redirect HTTP requests.
+
+Performance Testing Test Cases
+
+1. Load Testing
+Test Case 1: Maximum Concurrent Requests
+* Description: Send a large number of concurrent requests to the API endpoints to determine their maximum load capacity.
+* Expected Result: Monitor system response time and resource utilisation. Ensure that the system handles the load gracefully without crashing or excessive slowdowns.
+Test Case 2: Gradual Load Increase
+* Description: Gradually increase the number of concurrent requests to observe how the system scales.
+* Expected Result: Measure response times, error rates, and resource usage to identify potential bottlenecks and scalability issues.
+2. Stress Testing
+Test Case 3: Beyond Maximum Load
+* Description: Overload the system with requests beyond its maximum capacity to observe its behaviour under stress.
+* Expected Result: Identify how the system behaves under extreme load, including error handling, resource exhaustion, and potential crashes.
+3. Throughput Testing
+Test Case 4: Request Throughput
+* Description: Send a consistent number of requests per second to measure the system's throughput.
+* Expected Result: Measure the number of successful requests handled by the system per unit of time, ensuring it meets the desired throughput.
+4. Response Time Testing
+Test Case 5: Average Response Time
+* Description: Send a moderate load of requests and measure the average response time.
+* Expected Result: Calculate the average time taken by the system to respond to requests. Ensure it meets performance expectations.
+Test Case 6: Response Time under Load
+* Description: Measure the response time while the system is under various load levels.
+* Expected Result: Analyze how response times change as the system load increases. Identify performance degradation points.
+5. Resource Utilisation Testing
+Test Case 7: CPU and Memory Usage
+* Description: Monitor CPU and memory usage during different load scenarios.
+* Expected Result: Ensure that the system does not experience excessive CPU spikes or memory leaks that could impact performance.
+6. Asynchronous Processing
+Test Case 8: Asynchronous Update Time
+* Description: Test the time it takes for the "sms_sent" field to update asynchronously after triggering the SMS sending process.
+* Expected Result: Ensure that the asynchronous update occurs within the specified 10-20 second timeframe.
+7. Network Latency Testing
+Test Case 9: Latency Impact*
+* Description: Introduce network latency to measure the impact on response times.
+* Expected Result: Analyse how response times are affected by network delays, ensuring the system remains responsive.
+8. Connection Pool Testing
+Test Case 10: Connection Pool Exhaustion
+* Description: Open a large number of database connections to test connection pool behaviour.
+* Expected Result: Observe how the system handles connection pool exhaustion, and ensure it manages connections efficiently.
+9. Concurrent Requests
+Test Case 11: Mixed Concurrent Requests
+* Description: Send a mix of different types of requests (POST, GET) concurrently to simulate real-world usage.
+* Expected Result: Analyse how the system handles concurrent requests with various characteristics.
+10. Stress Testing Database
+Test Case 12: Database Performance Under Load
+* Description: Perform stress testing on the SQLite database by sending a high number of requests.
+* Expected Result: Monitor database performance metrics, such as response times and resource usage, under stress conditions.
+11. Failover and Recovery Testing
+Test Case 13: Simulated Failover and Recovery
+* Description: Intentionally crash the system and observe its recovery process.
+* Expected Result: Validate that the system can recover gracefully without data loss or corruption.
+
+There are other components in a Test Plan as well which were not mentioned here.
+
+1. Introduction and Purpose
+2. Scope and Objectives
+3. Test Strategy
+4. Test Schedule
+5. Resources and Responsibilities
+6. Test Deliverables
+7. Risk Analysis
+8. Test Entry & ExitCriteria
+9. Test Environment
+10. Test Cases and Test Scripts
+11. Test Execution
+12. Defect Management
+13. Test Reporting
+14. Approval and Sign-off
+15. Automation Plan
+16. Performance & Security Test Plan
+
+
+ Issues Observed while Automation 
+
+1. The post API should return 201 when the customer is created & not 200
+2. For Unauthorised Access, i.e. not providing or invalid x-session-token should result in a 401 status code instead of 403.
+3. When the Customer is created with an invalid name (alphanumeric), then the error code should be 500 rather than 400 or it should be inconsistent when any other checks failed for the data like the invalid phone number
+4. When the second header is missing i.e. "user-agent", then the status code should be 403 rather than 200 & customer should not be created.
+5. When the get customer API has an invalid id parameter, the error response is incorrect.
+6. When get customer API has a missing header for invalid “x-session-token”, the error response is incorrect and the error code should be 401 instead of 400 since it is a Auth header.
+7. When get customer API has an invalid Auth header value for “x-session-token”, the error status code should be 401 instead of 403.
+
+Note: I have failed only a few test cases but not failed all test cases (which should be failed) because we need to have a proper discussion with the dev team to understand why there is a certain behaviour.
+
