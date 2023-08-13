@@ -19,3 +19,4 @@ Go to Project->Properties->Testng-> Set this xml as your template xml and then y
 7. once the tests are run successfully ,run the below command
 allure serve allure-results
 8. The report should Auto open using the browser or use allure open command
+Note - Make sure to run the SDET-Assignment project which includes dev code before running the tests
